@@ -30,7 +30,7 @@ install: dep ## Build and install binary file
 
 clean: ## Remove previous built binnay and keep latest lean packages
 	@go mod tidy
-	@rm -f $(basename `git rev-parse --show-toplevel`)
+	@rm -f ./$(basename `git rev-parse --show-toplevel`)
 
 help: ## Display this help screen
 	@grep -h -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
