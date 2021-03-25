@@ -1,18 +1,16 @@
 default:
-  image: golang:1.15-buster
+  image: golang:1.16-buster
 
 variables:
   GIT_SUBMODULE_STRATEGY: recursive
 
 stages:
-  - test
+- test
 
 lint:
   stage: test
-  script:
-    - make lint
+  script: make lint
 
 test:
   stage: test
-  script:
-    - make test
+  script: make test

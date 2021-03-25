@@ -3,34 +3,30 @@ on:
   pull_request:
   push:
     tags:
-      - v*
+    - v*
     branches:
-      - master
-      - main
-      - "releases/*"
+    - master
+    - main
+    - "releases/*"
 jobs:
   golangci:
-    strategy:
-      matrix:
-        go-version: [1.15.x]
-        os: [ubuntu-latest]
     name: lint
-    runs-on: ${{ matrix.os }}
+    runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-      - name: golangci-lint
-        uses: golangci/golangci-lint-action@v2
-        with:
-          version: v1.29
+    - uses: actions/checkout@v2
+    - uses: golangci/golangci-lint-action@v2
+      name: golangci-lint
+      with:
+        version: latest
   test:
     strategy:
       matrix:
-        go-version: [1.15.x]
-        platform: [ubuntu-latest]
+        go-version: [1.16.x]
+        platform: [ubuntu-latest, windows-latest]
     runs-on: ${{ matrix.platform }}
     steps:
-    - name: prepare
-      uses: actions/setup-go@v1
+    - uses: actions/setup-go@v1
+      name: prepare
       with:
         go-version: ${{ matrix.go-version }}
     - uses: actions/checkout@v1
