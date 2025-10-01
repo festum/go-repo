@@ -1,5 +1,5 @@
 default:
-  image: golang:1.16-buster
+  image: golang:1-alpine
 
 variables:
   GIT_SUBMODULE_STRATEGY: recursive
