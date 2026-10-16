@@ -10,6 +10,7 @@
 
 # Output of the go coverage tool, specifically when used with LiteIDE
 *.out
+coverage.html
 
 # Logs
 *.log
@@ -18,5 +19,15 @@
 vendor/
 bin/
 
+# Go workspace file
+go.work.sum
+
 # Editors
 .vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS files
+.DS_Store

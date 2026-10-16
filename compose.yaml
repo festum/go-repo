@@ -1,0 +1,6 @@
+services:
+  dummy:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: go-repo:dummy
