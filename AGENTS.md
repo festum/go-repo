@@ -1,8 +1,8 @@
 # AGENTS Contract
 
 Doc-ID: AGENTS-GO-REPO
-Version: 3.9.0
-Updated-UTC: 2026-10-16T16:16:27Z
+Version: 3.10.0
+Updated-UTC: 2026-10-16T22:03:26Z
 
 ## Scope
 
@@ -44,6 +44,7 @@ This file defines mandatory repository rules for human and agent contributors.
 6. Container images MUST be built by a multi-stage `Dockerfile` whose runtime stage is a distroless non-root image, and MUST be described by `compose.yaml`. `Dockerfile` changes MUST pass `make dockerlint`. hadolint's severity policy lives in `.hadolint.yaml`. Every dev tool installed by `make tools` MUST be pinned to an exact released version and MUST NOT use `@latest`. Each pin MUST be declared once: `golangci-lint` in `.golangci-lint-version`, which both the `Makefile` and the `lint` workflow read; `govulncheck` in `GOVULNCHECK_VERSION` and `hadolint` in `HADOLINT_VERSION` in the `Makefile`.
 7. Dependencies MUST be updated by Dependabot in exactly three categories: `infra` (`docker`), `ci` (`github-actions`), and `code-lib` (`gomod`). Each category MUST run weekly on Monday with one catch-all group (`patterns: ["*"]`) and `open-pull-requests-limit: 1`, so a category never holds more than one open bump pull request. `rebase-strategy` MUST stay `auto`. The categories MUST be staggered one hour apart in UTC through the `time` input (`infra` 04:00, `ci` 05:00, `code-lib` 06:00), so their pull requests never compete for the same checks or review window. `time` only schedules when Dependabot checks for updates and opens or rebases a pull request; merging happens later, once the required checks pass.
 8. Dependabot pull requests MUST be merged automatically by `.github/workflows/dependabot-automerge.yaml`, which enables auto-merge and lets the required status checks gate the merge. Auto-merge MUST NOT be treated as the gate itself: the checks it waits for MUST be the required status checks of the default-branch ruleset. Repository settings and rulesets are NOT inherited when a repository is created from this template, so a derived repository MUST set `allow_auto_merge` to `true` and re-create the ruleset before auto-merge takes effect.
+9. Every merge to `main` MUST produce a tag and a GitHub release automatically, through `.github/workflows/release.yaml`. The bump defaults to `patch`; a Conventional Commit type in the pull request title escalates it (`feat:` to minor, `feat!:` or `BREAKING CHANGE:` to major). The release workflow MUST pin its actions to a released tag like every other workflow, and MUST run with `contents: write` scoped to that workflow alone.
 
 ## Artifact and document placement
 

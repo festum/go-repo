@@ -1,9 +1,10 @@
 # Doc-ID: MAKEFILE-GO-REPO
-# Version: 3.4.0
-# Updated-UTC: 2026-10-16T16:16:27Z
+# Version: 3.5.0
+# Updated-UTC: 2026-10-16T22:03:26Z
 
 SHELL := /bin/sh
 BINARY := $(shell go list -m | awk -F/ '{print $$NF}')
+VERSION ?= dev
 GO ?= go
 TOOLS_BIN := $(CURDIR)/bin
 GOLANGCI_LINT_VERSION ?= $(shell cat $(CURDIR)/.golangci-lint-version)
@@ -26,7 +27,7 @@ run: ## Run app
 
 build: ## Build binary file
 	@mkdir -p bin
-	@$(GO) build -o bin/$(BINARY) ./cmd/dummy
+	@$(GO) build -ldflags="-X main.version=$(VERSION)" -o bin/$(BINARY) ./cmd/dummy
 
 test: ## Run unittests
 	@$(GO) test ./... -race -shuffle=on

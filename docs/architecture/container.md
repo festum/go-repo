@@ -1,8 +1,8 @@
 # C4 Level 2: Container
 
 Doc-ID: ARCH-CONTAINER-GO-REPO
-Version: 1.1.0
-Updated-UTC: 2026-10-16T12:52:00Z
+Version: 1.2.0
+Updated-UTC: 2026-10-16T22:03:26Z
 
 The runnable and buildable units inside `go-repo`. A "container" in C4 terms is anything that executes or is built: the binary, the library package, the tool binaries, and the CI pipelines.
 
@@ -13,14 +13,14 @@ C4Container
     Person(contributor, "Contributor", "Runs make targets locally")
 
     Container_Boundary(repo, "go-repo") {
-        Container(cmd, "cmd/dummy", "Go binary", "Entry point; wiring only, calls the library")
+        Container(cmd, "cmd/dummy", "Go binary", "Entry point; wiring only, calls the library, embeds the build version")
         Container(internal, "internal/greet", "Go package", "Reusable greeting logic")
         Container(makefile, "Makefile", "Make", "Build, test, lint, coverage, and vuln entry points")
         Container(toolbin, "bin/", "Go and static binaries", "Pinned golangci-lint, govulncheck, and hadolint, git-ignored")
         Container(dockerfile, "Dockerfile", "Container image", "Multi-stage build producing a distroless non-root image")
     }
 
-    System_Ext(actions, "GitHub Actions", "CI: lint, dockerlint, test, vuln, and CodeQL jobs")
+    System_Ext(actions, "GitHub Actions", "CI: lint, dockerlint, test, vuln, and CodeQL jobs; Release: tag and release on merge")
 
     Rel(contributor, makefile, "Runs targets")
     Rel(makefile, cmd, "Builds via make build")

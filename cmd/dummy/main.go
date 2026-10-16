@@ -7,6 +7,9 @@ import (
 	"github.com/festum/go-repo/internal/greet"
 )
 
+var version = "dev"
+
 func main() {
 	fmt.Println(greet.Greet("dummy"))
+	fmt.Println(version)
 }

@@ -1,8 +1,8 @@
 # go-repo
 
 Doc-ID: README-GO-REPO
-Version: 3.7.0
-Updated-UTC: 2026-10-16T16:16:27Z
+Version: 3.8.0
+Updated-UTC: 2026-10-16T22:03:26Z
 
 Golang repository template with a Makefile, linting, security scanning, and GitHub Actions CI.
 
@@ -30,7 +30,7 @@ compose.yaml        service definition for the image
 
 | Command | Purpose |
 | --- | --- |
-| `make build` | Build `bin/go-repo` from `./cmd/dummy` |
+| `make build` | Build `bin/go-repo` from `./cmd/dummy`, stamping `main.version` from `VERSION` (default `dev`) |
 | `make run` | Run `./cmd/dummy` |
 | `make test` | Run tests with `-race -shuffle=on` |
 | `make coverage` | Write `coverage.out` and print total coverage |
@@ -52,6 +52,7 @@ compose.yaml        service definition for the image
 - `.github/workflows/ci.yaml` — on push to `main` and on pull requests: `lint`, `test` (`-race -shuffle=on`, a `go mod tidy` drift check, and the `make coverage-check` floor), `dockerlint` (hadolint), and `vuln` (`govulncheck`). A push to `main` that only touches docs is skipped; pull requests always run so required checks never stall. In-progress runs for the same ref are cancelled.
 - `.github/workflows/codeql.yaml` — CodeQL `security-and-quality` on push to `main`, weekly, and on demand. Not run per pull request: it is the slowest job and the cheapest signal to defer.
 - `.github/workflows/dependabot-automerge.yaml` — on Dependabot pull requests only: enables auto-merge so the pull request merges itself once the required checks pass. The ruleset on `main` requires `Lint`, `Dockerfile Lint`, `Test`, and `Vulnerability Check`; auto-merge waits for exactly those.
+- `.github/workflows/release.yaml` — on push to `main` and on demand: bumps the version, pushes the tag, and creates the GitHub release with the generated changelog. The bump defaults to `patch`; a Conventional Commit type in the pull request title escalates it (`feat:` to minor, `feat!:` or `BREAKING CHANGE:` to major). No release artifacts are attached.
 
 Dependencies are updated by Dependabot (`.github/dependabot.yml`) in three categories, each checked once a week on Monday and capped at one open pull request: `infra` (`docker`), `ci` (`github-actions`), and `code-lib` (`gomod`). Each category groups every dependency it owns into a single pull request, so a weekly run opens at most one bump per category. Dependabot rebases those pull requests automatically when the target branch moves. The three categories are staggered one hour apart in UTC (`infra` 04:00, `ci` 05:00, `code-lib` 06:00), so their pull requests never compete for the same checks or review window. The `time` input schedules only when Dependabot checks for updates; the merge itself happens whenever the required checks pass. Settings and rulesets are not inherited from a template, so a repository created from this one must enable `allow_auto_merge` and re-create the ruleset.
 

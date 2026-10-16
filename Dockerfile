@@ -4,7 +4,8 @@ WORKDIR /src
 COPY go.mod ./
 RUN go mod download
 COPY . .
-RUN CGO_ENABLED=0 go build -trimpath -ldflags="-s -w" -o /out/dummy ./cmd/dummy
+ARG VERSION=dev
+RUN CGO_ENABLED=0 go build -trimpath -ldflags="-s -w -X main.version=$VERSION" -o /out/dummy ./cmd/dummy
 
 FROM gcr.io/distroless/static-debian12:nonroot
 COPY --from=build /out/dummy /usr/local/bin/dummy
