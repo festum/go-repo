@@ -1,0 +1,99 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+    paths-ignore:
+      - "**.md"
+      - "docs/**"
+      - "LICENSE"
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  lint:
+    name: Lint
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Set up Go
+        uses: actions/setup-go@v7
+        with:
+          go-version-file: go.mod
+
+      - name: golangci-lint
+        uses: golangci/golangci-lint-action@v9
+        with:
+          version-file: .golangci-lint-version
+          args: --timeout 5m
+
+  dockerlint:
+    name: Dockerfile Lint
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: hadolint
+        uses: hadolint/hadolint-action@v3.5.0
+        with:
+          dockerfile: Dockerfile
+          config: .hadolint.yaml
+
+  test:
+    name: Test
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Set up Go
+        uses: actions/setup-go@v7
+        with:
+          go-version-file: go.mod
+
+      - name: Verify module files
+        run: |
+          go mod verify
+          go mod download
+
+      - name: Check go mod tidy
+        run: |
+          go mod tidy
+          git diff --exit-code -- go.mod go.sum
+          test -z "$(git status --porcelain -- go.mod go.sum)"
+
+      - name: Build
+        run: go build ./...
+
+      - name: Run tests
+        run: |
+          go test -race -shuffle=on -coverprofile=coverage.out ./...
+          go tool cover -func=coverage.out | tail -1
+
+      - name: Enforce coverage floor
+        run: make coverage-check
+
+  vuln:
+    name: Vulnerability Check
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Set up Go
+        uses: actions/setup-go@v7
+        with:
+          go-version-file: go.mod
+
+      - name: Run govulncheck
+        uses: golang/govulncheck-action@v1

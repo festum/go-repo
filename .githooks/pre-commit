@@ -1,7 +1,7 @@
 #!/bin/sh
 # Doc-ID: HOOK-PRE-COMMIT
-# Version: 1.0.0
-# Updated-UTC: 2026-08-18T21:59:49Z
+# Version: 1.0.1
+# Updated-UTC: 2026-10-16T12:24:01Z
 
 set -eu
 
